@@ -6,6 +6,7 @@
 <title>Kit de Herramientas · Auditoría RRHH — ONE</title>
 <link rel="icon" href="favicon.webp">
 <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
   :root{
     --negro:#000;--oscuro:#1a181d;--blanco:#fefeff;
@@ -19,15 +20,13 @@
   body{font-family:"Exo 2",system-ui,sans-serif;background:var(--crema);color:var(--texto);line-height:1.55;-webkit-font-smoothing:antialiased}
   .hi{display:inline-block;vertical-align:middle;stroke:currentColor;fill:none;stroke-width:1.7;flex-shrink:0}
 
-  /* NAV */
   nav{position:sticky;top:0;z-index:50;background:rgba(254,254,255,.85);backdrop-filter:blur(14px);border-bottom:1px solid var(--gris)}
   nav .inner{max-width:980px;margin:0 auto;padding:11px 22px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
   nav img{height:28px}
   nav .titu{font-size:13px;font-weight:700;color:var(--oscuro)}
   nav .titu span{color:var(--lavanda);font-weight:500}
   .tabs{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
-  .tab{display:flex;align-items:center;gap:8px;background:var(--gris-soft);border:1px solid transparent;
-    padding:9px 15px;border-radius:30px;font-family:"Exo 2";font-size:13.5px;font-weight:600;color:var(--sub);cursor:pointer;transition:.15s}
+  .tab{display:flex;align-items:center;gap:8px;background:var(--gris-soft);border:1px solid transparent;padding:9px 15px;border-radius:30px;font-family:"Exo 2";font-size:13.5px;font-weight:600;color:var(--sub);cursor:pointer;transition:.15s}
   .tab .ico{width:20px;height:20px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;background:var(--gris);color:var(--oscuro)}
   .tab:hover{color:var(--oscuro)}
   .tab.activo{background:var(--oscuro);color:var(--blanco)}
@@ -37,39 +36,32 @@
   .panel.activo{display:block;animation:fade .25s ease}
   @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
-  /* Encabezado de herramienta */
   .head{display:flex;align-items:center;gap:16px;margin-bottom:18px}
-  .head .badge{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;
-    font-size:22px;background:linear-gradient(135deg,var(--fucsia),var(--cian))}
+  .head .badge{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--fucsia),var(--cian))}
   .head h1{font-size:24px;font-weight:800;letter-spacing:-.3px}
   .head p{font-size:14px;color:var(--sub)}
 
-  /* Como funciona */
-  .ayuda{background:linear-gradient(135deg,rgba(225,123,215,.10),rgba(107,225,227,.10));
-    border:1px solid rgba(225,123,215,.30);border-radius:16px;padding:18px 20px;margin-bottom:22px}
+  .ayuda{background:linear-gradient(135deg,rgba(225,123,215,.10),rgba(107,225,227,.10));border:1px solid rgba(225,123,215,.30);border-radius:16px;padding:18px 20px;margin-bottom:22px}
   .ayuda .ah{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;cursor:pointer;user-select:none}
-  .ayuda .ah .q{width:24px;height:24px;border-radius:50%;background:var(--oscuro);color:var(--cian);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800}
+  .ayuda .ah .q{width:24px;height:24px;border-radius:50%;background:var(--oscuro);color:var(--cian);display:flex;align-items:center;justify-content:center}
   .ayuda .ah .toggle{margin-left:auto;font-size:13px;color:var(--fucsia);font-weight:600}
   .ayuda .pasos{margin-top:14px;display:grid;gap:10px}
   .ayuda.cerrada .pasos{display:none}
   .ap{display:flex;gap:12px;align-items:flex-start;font-size:14px}
-  .ap .n{flex-shrink:0;width:24px;height:24px;border-radius:8px;background:var(--blanco);border:1px solid var(--gris);
-    display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:var(--oscuro)}
+  .ap .n{flex-shrink:0;width:24px;height:24px;border-radius:8px;background:var(--blanco);border:1px solid var(--gris);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:var(--oscuro)}
   .ap b{color:var(--oscuro)}
   .ayuda .tip{margin-top:12px;font-size:13px;color:var(--sub);border-top:1px dashed rgba(225,123,215,.4);padding-top:10px}
   .ayuda .tip b{color:var(--fucsia)}
 
-  /* Card */
   .card{background:var(--blanco);border:1px solid var(--gris);border-radius:18px;padding:24px;margin-bottom:18px}
   .seclabel{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--fucsia);margin-bottom:14px;display:flex;align-items:center;gap:8px}
   .seclabel .n{width:22px;height:22px;border-radius:7px;background:linear-gradient(135deg,var(--fucsia),var(--cian));color:var(--oscuro);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800}
 
   label{font-size:12px;font-weight:600;color:var(--sub);margin-bottom:5px;display:block}
-  input,textarea,select{font-family:"Exo 2";font-size:14.5px;color:var(--texto);padding:11px 13px;
-    border:1.5px solid var(--gris);border-radius:11px;background:var(--blanco);width:100%;transition:.15s}
+  input,textarea,select{font-family:"Exo 2";font-size:14.5px;color:var(--texto);padding:11px 13px;border:1.5px solid var(--gris);border-radius:11px;background:var(--blanco);width:100%;transition:.15s}
   input::placeholder,textarea::placeholder{color:#b4b2bd}
   input:focus,textarea:focus,select:focus{outline:none;border-color:var(--fucsia);box-shadow:0 0 0 3px rgba(225,123,215,.15)}
-  textarea{resize:vertical;min-height:64px}
+  textarea{resize:vertical;min-height:80px}
   .campo{margin-bottom:14px}
   .duo{display:grid;grid-template-columns:1fr 1fr;gap:14px}
   .trio{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
@@ -78,27 +70,23 @@
   .primario{background:linear-gradient(100deg,var(--fucsia),var(--cian));color:var(--oscuro)}
   .secundario{background:var(--blanco);color:var(--oscuro);border:1.5px solid var(--gris)}
   .btn:hover{transform:translateY(-1px);filter:brightness(1.03)}
-  .acciones{display:flex;gap:12px;flex-wrap:wrap;margin-top:6px}
+  .acciones{display:flex;gap:12px;flex-wrap:wrap;margin-top:6px;align-items:center}
 
-  /* Bloque interno */
   .bloque{border:1.5px solid var(--gris);border-radius:14px;margin-bottom:16px;overflow:hidden}
   .bloque>.t{padding:13px 16px;background:var(--gris-soft);font-size:13px;font-weight:700;display:flex;align-items:center;gap:9px}
   .bloque>.t .nb{width:22px;height:22px;border-radius:7px;background:var(--oscuro);color:var(--cian);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800}
   .bloque>.t .pista{margin-left:auto;font-weight:500;color:var(--lavanda);font-size:12px}
   .bloque .ct{padding:16px}
-  .crit-tag{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;
-    color:var(--fucsia);background:rgba(225,123,215,.12);padding:2px 8px;border-radius:20px;margin-bottom:6px}
+  .crit-tag{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--fucsia);background:rgba(225,123,215,.12);padding:2px 8px;border-radius:20px;margin-bottom:6px}
 
-  /* Semaforo */
   .semaforo{border-radius:14px;padding:20px 22px;border:1.5px solid var(--gris);display:flex;align-items:center;gap:18px;transition:.2s;background:var(--blanco)}
-  .luz{width:42px;height:42px;border-radius:50%;flex-shrink:0;background:var(--gris);transition:.2s;box-shadow:0 0 0 0 transparent}
+  .luz{width:42px;height:42px;border-radius:50%;flex-shrink:0;background:var(--gris);transition:.2s}
   .semaforo.rojo{background:#fcf0ef;border-color:#e6b9b3}.semaforo.rojo .luz{background:var(--rojo);box-shadow:0 0 18px rgba(192,57,43,.5)}
   .semaforo.ambar{background:#fdf6e7;border-color:#ecd6a0}.semaforo.ambar .luz{background:var(--ambar);box-shadow:0 0 18px rgba(201,138,22,.5)}
   .semaforo.verde{background:#eef7f1;border-color:#b6d8c2}.semaforo.verde .luz{background:var(--verde);box-shadow:0 0 18px rgba(46,125,79,.5)}
   .semaforo .tx strong{display:block;font-size:16px}
   .semaforo .tx span{font-size:13.5px;color:var(--sub)}
 
-  /* Mapa calor */
   .carga{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:12px;align-items:end;margin-bottom:18px}
   table{width:100%;border-collapse:collapse;font-size:13.5px;margin-bottom:22px}
   th,td{padding:10px 12px;border-bottom:1px solid var(--gris);text-align:left}
@@ -114,13 +102,11 @@
   .leyenda{font-size:12.5px;color:var(--sub);text-align:center;margin-bottom:8px}
   .vacio{color:var(--lavanda);font-size:13.5px;font-style:italic;text-align:center}
 
-  /* Hallazgos */
   .hallazgo{border:1.5px solid var(--gris);border-left:5px solid var(--lavanda);border-radius:12px;padding:16px;margin-bottom:14px}
   .hallazgo.alto{border-left-color:var(--rojo)}.hallazgo.medio{border-left-color:var(--ambar)}.hallazgo.bajo{border-left-color:var(--verde)}
   .hallazgo .top{display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:10px}
   .quitarH{color:var(--rojo);cursor:pointer;font-weight:800;border:none;background:none;font-size:19px;float:right;line-height:1}
 
-  /* Inicio */
   .hero{background:var(--oscuro);color:var(--blanco);border-radius:22px;padding:40px 34px;position:relative;overflow:hidden;margin-bottom:22px}
   .hero .gd{position:absolute;width:320px;height:320px;border-radius:50%;filter:blur(90px);opacity:.45}
   .hero .ct{position:relative;z-index:2}
@@ -131,7 +117,7 @@
   .cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:18px}
   .mini{text-align:left;background:var(--blanco);border:1.5px solid var(--gris);border-radius:16px;padding:22px;cursor:pointer;transition:.15s;font-family:"Exo 2"}
   .mini:hover{border-color:var(--fucsia);transform:translateY(-3px);box-shadow:0 10px 26px rgba(26,24,29,.08)}
-  .mini .ic{width:44px;height:44px;border-radius:13px;background:linear-gradient(135deg,var(--fucsia),var(--cian));display:flex;align-items:center;justify-content:center;font-size:21px;margin-bottom:14px}
+  .mini .ic{width:44px;height:44px;border-radius:13px;background:linear-gradient(135deg,var(--fucsia),var(--cian));display:flex;align-items:center;justify-content:center;margin-bottom:14px}
   .mini h3{font-size:16px;margin-bottom:6px}
   .mini p{font-size:13.5px;color:var(--sub)}
   .mini .go{margin-top:12px;font-size:13px;font-weight:700;color:var(--fucsia);display:inline-flex;align-items:center;gap:5px}
@@ -141,40 +127,25 @@
   .flujo .f .b{flex-shrink:0;width:30px;height:30px;border-radius:9px;background:var(--gris-soft);color:var(--oscuro);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px}
   .flujo .f b{color:var(--oscuro)}
 
-  /* Prompt */
   .prompt{background:var(--oscuro);color:#e7edf2;border-radius:16px;padding:22px 24px;font-size:13px;line-height:1.65;font-family:"Consolas",monospace;white-space:pre-wrap;position:relative}
   .copiar{position:absolute;top:14px;right:14px;background:linear-gradient(100deg,var(--fucsia),var(--cian));color:var(--oscuro);border:none;border-radius:9px;padding:8px 15px;font-size:12px;font-weight:700;cursor:pointer;font-family:"Exo 2";display:inline-flex;align-items:center;gap:6px}
   .nota{font-size:13.5px;color:var(--sub);margin-top:12px}
+  footer{font-size:12.5px;color:var(--sub);text-align:center;padding:20px;border-top:1px solid var(--gris);margin-top:8px}
 
-  footer{font-size:12.5px;color:var(--lavanda);text-align:center;padding:20px}
-  .foot-line{color:var(--sub);border-top:1px solid var(--gris);padding-top:16px;margin-top:8px;font-size:12.5px}
-
-  @media print{
-    @page{margin:14mm}
-    nav,.ayuda,.acciones,.carga,.quitar,.quitarH,.add,.copiar,.head p,.leyenda,.foot-line,footer{display:none !important}
-    body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-    .panel{display:none !important}
-    .panel.activo{display:block !important;margin:0;padding:0}
-    .card,.bloque{border:1px solid #ccc;break-inside:avoid;box-shadow:none}
-    .hero,.cards3,.flujo{display:none !important}   /* el inicio no se imprime */
-    input,textarea,select{border:1px solid #ddd}
-    .semaforo,.matriz td,.badge2,.hallazgo{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-    .head{margin-bottom:10px}
-  }
   @media(max-width:780px){.duo,.trio,.carga,.cards3,.hallazgo .top{grid-template-columns:1fr}
     nav .inner{justify-content:center}.tabs{margin-left:0;justify-content:center}}
 </style>
 </head>
 <body>
 
-<!-- Sprite Heroicons (outline) -->
+<!-- Sprite Heroicons -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="i-home" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></symbol>
   <symbol id="i-clipboard" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25Z"/></symbol>
   <symbol id="i-fire" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 18a3.75 3.75 0 0 0 .495-7.468 5.99 5.99 0 0 0-1.925 3.547 5.975 5.975 0 0 1-2.133-1.001A3.75 3.75 0 0 0 12 18Z"/></symbol>
   <symbol id="i-document" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/></symbol>
   <symbol id="i-sparkles" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456Z"/></symbol>
-  <symbol id="i-printer" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 0 1 1.913-.247m10.5 0a48.536 48.536 0 0 0-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5Zm-3 0h.008v.008H15V10.5Z"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/></symbol>
   <symbol id="i-plus" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></symbol>
   <symbol id="i-eye" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></symbol>
   <symbol id="i-arrow" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></symbol>
@@ -203,7 +174,7 @@
     <div class="ct">
       <div class="kick">Herramientas prácticas</div>
       <h1>Tu caja de <span class="deg">auditoría con IA</span></h1>
-      <p>Tres herramientas listas para usar hoy mismo. Elegí una abajo o desde el menú de arriba. Cada una te explica cómo funciona en 3 pasos.</p>
+      <p>Tres herramientas listas para usar hoy mismo. Cargás los datos y cada una te genera un PDF profesional. Lo que escribís se guarda solo: no se pierde aunque cierres la pestaña.</p>
     </div>
   </div>
 
@@ -220,7 +191,7 @@
     </button>
     <button class="mini" onclick="ir('informe',document.querySelectorAll('.tab')[3])">
       <div class="ic"><svg class="hi" width="24" height="24"><use href="#i-document"/></svg></div><h3>Informe Final</h3>
-      <p>Completás las 8 secciones y los hallazgos, y lo imprimís como PDF listo para entregar.</p>
+      <p>Completás las 8 secciones y los hallazgos, y lo descargás como PDF listo para entregar.</p>
       <div class="go">Abrir <svg class="hi" width="15" height="15"><use href="#i-arrow"/></svg></div>
     </button>
   </div>
@@ -247,7 +218,7 @@
     <div class="pasos">
       <div class="ap"><span class="n">1</span><div>Elegí un proceso real (ej.: "Ingreso de personal") y completá <b>qué recibe</b> (IN) y <b>qué entrega</b> (OUT).</div></div>
       <div class="ap"><span class="n">2</span><div>Cargá los <b>3 críticos</b> (responsable, backup, control) y los <b>3 de respaldo</b> (descripción, documentación, periodicidad).</div></div>
-      <div class="ap"><span class="n">3</span><div>Mirá el <b>semáforo</b> de abajo: si está rojo, falta un crítico = hallazgo. Cuando esté verde, tocá <b>Imprimir / PDF</b>.</div></div>
+      <div class="ap"><span class="n">3</span><div>Mirá el <b>semáforo</b>: si está rojo, falta un crítico = hallazgo. Cuando termines, tocá <b>Descargar PDF</b> y se genera el documento solo.</div></div>
       <div class="tip"><b>Truco:</b> dejá el campo "Control" vacío a propósito y mirá cómo el semáforo salta a rojo. Eso es exactamente lo que detecta una auditoría.</div>
     </div>
   </div>
@@ -255,39 +226,36 @@
   <div class="card">
     <div class="seclabel"><span class="n">i</span> Datos del proceso</div>
     <div class="trio" style="margin-bottom:18px">
-      <div class="campo"><label>Proceso auditado</label><input type="text" data-r="info" placeholder="Ej.: Ingreso de personal"></div>
-      <div class="campo"><label>Área</label><input type="text" data-r="info" placeholder="Ej.: RRHH"></div>
-      <div class="campo"><label>Auditor / Fecha</label><input type="text" data-r="info" placeholder="Nombre — dd/mm/aaaa"></div>
+      <div class="campo"><label>Proceso auditado</label><input id="rl-proceso" type="text" data-r="info" placeholder="Ej.: Ingreso de personal"></div>
+      <div class="campo"><label>Área</label><input id="rl-area" type="text" data-r="info" placeholder="Ej.: RRHH"></div>
+      <div class="campo"><label>Auditor / Fecha</label><input id="rl-auditor" type="text" data-r="info" placeholder="Nombre — dd/mm/aaaa"></div>
     </div>
-
     <div class="bloque">
       <div class="t">Trazabilidad <span class="pista">qué entra y qué sale</span></div>
       <div class="ct duo">
-        <div class="campo"><label>IN — qué recibe y de quién</label><textarea data-r="info" placeholder="Ej.: recibe aviso de baja del jefe por mail"></textarea></div>
-        <div class="campo"><label>OUT — qué entrega y a quién</label><textarea data-r="info" placeholder="Ej.: entrega terna al gerente que autoriza"></textarea></div>
+        <div class="campo"><label>IN — qué recibe y de quién</label><textarea id="rl-in" data-r="info" placeholder="Ej.: recibe aviso de baja del jefe por mail"></textarea></div>
+        <div class="campo"><label>OUT — qué entrega y a quién</label><textarea id="rl-out" data-r="info" placeholder="Ej.: entrega terna al gerente que autoriza"></textarea></div>
       </div>
     </div>
-
     <div class="bloque">
       <div class="t"><span class="nb">1</span> Responsable · Backup · Control <span class="pista">los 3 críticos</span></div>
       <div class="ct">
         <div class="duo" style="margin-bottom:14px">
-          <div class="campo"><span class="crit-tag">Crítico</span><label>Responsable (quién hace)</label><input type="text" data-r="critico"></div>
-          <div class="campo"><span class="crit-tag">Crítico</span><label>Backup (quién reemplaza)</label><input type="text" data-r="critico"></div>
+          <div class="campo"><span class="crit-tag">Crítico</span><label>Responsable (quién hace)</label><input id="rl-responsable" type="text" data-r="critico"></div>
+          <div class="campo"><span class="crit-tag">Crítico</span><label>Backup (quién reemplaza)</label><input id="rl-backup" type="text" data-r="critico"></div>
         </div>
-        <div class="campo"><span class="crit-tag">Crítico</span><label>Control (quién supervisa)</label><input type="text" data-r="critico" placeholder="Debe ser otra persona distinta"></div>
+        <div class="campo"><span class="crit-tag">Crítico</span><label>Control (quién supervisa)</label><input id="rl-control" type="text" data-r="critico" placeholder="Debe ser otra persona distinta"></div>
       </div>
     </div>
-
     <div class="bloque">
       <div class="t"><span class="nb">2</span> Descripción · Documentación · Periodicidad</div>
       <div class="ct">
-        <div class="campo" style="margin-bottom:14px"><label>Descripción de la tarea (acción humana)</label><textarea data-r="respaldo" placeholder="Qué se hace concretamente en este paso"></textarea></div>
+        <div class="campo" style="margin-bottom:14px"><label>Descripción de la tarea (acción humana)</label><textarea id="rl-descripcion" data-r="respaldo" placeholder="Qué se hace concretamente en este paso"></textarea></div>
         <div class="duo">
-          <div class="campo"><label>Documentación respaldatoria</label><input type="text" data-r="respaldo" placeholder="Mail, formulario, sistema, código..."></div>
-          <div class="campo"><label>Periodicidad</label><select data-r="respaldo"><option value="">Seleccionar...</option><option>Diaria</option><option>Quincenal</option><option>Mensual</option><option>Eventual (al ocurrir un suceso)</option></select></div>
+          <div class="campo"><label>Documentación respaldatoria</label><input id="rl-doc" type="text" data-r="respaldo" placeholder="Mail, formulario, sistema, código..."></div>
+          <div class="campo"><label>Periodicidad</label><select id="rl-periodicidad" data-r="respaldo"><option value="">Seleccionar...</option><option>Diaria</option><option>Quincenal</option><option>Mensual</option><option>Eventual (al ocurrir un suceso)</option></select></div>
         </div>
-        <div class="campo" style="margin-top:14px"><label>¿Hay control por oposición? (la información vuelve y se concilia)</label><select data-r="respaldo"><option value="">Seleccionar...</option><option>Sí — el comprobante vuelve y se controla</option><option>No — se entrega y no se verifica el retorno</option></select></div>
+        <div class="campo" style="margin-top:14px"><label>¿Hay control por oposición? (la información vuelve y se concilia)</label><select id="rl-oposicion" data-r="respaldo"><option value="">Seleccionar...</option><option>Sí — el comprobante vuelve y se controla</option><option>No — se entrega y no se verifica el retorno</option></select></div>
       </div>
     </div>
 
@@ -297,7 +265,7 @@
     </div>
 
     <div class="acciones" style="margin-top:18px">
-      <button class="btn primario" onclick="window.print()"><svg class="hi" width="18" height="18"><use href="#i-printer"/></svg> Imprimir / Guardar PDF</button>
+      <button class="btn primario" onclick="pdfRelevamiento()"><svg class="hi" width="18" height="18"><use href="#i-download"/></svg> Descargar PDF</button>
       <button class="btn secundario" onclick="limpiarRelev()">Limpiar</button>
     </div>
   </div>
@@ -315,7 +283,7 @@
     <div class="pasos">
       <div class="ap"><span class="n">1</span><div>Escribí una <b>tarea o proceso</b> (ej.: "Liquidación de sueldos").</div></div>
       <div class="ap"><span class="n">2</span><div>Elegí su <b>impacto</b> (qué pasa si falla) y su <b>probabilidad</b> (qué tan seguido pasa). Tocá <b>Agregar</b>.</div></div>
-      <div class="ap"><span class="n">3</span><div>La tarea aparece en la lista con su color y se ubica sola en la <b>matriz</b>. Cargá todas y mirá cuáles quedan en rojo.</div></div>
+      <div class="ap"><span class="n">3</span><div>La tarea aparece con su color y se ubica sola en la <b>matriz</b>. Cargá todas y tocá <b>Descargar PDF</b>.</div></div>
       <div class="tip"><b>Cómo leerlo:</b> rojo = inegociable, va primero · ámbar = planificar · verde = puede esperar. En crisis, se atacan primero las rojas.</div>
     </div>
   </div>
@@ -325,7 +293,7 @@
       <div><label>Tarea / Proceso</label><input id="c-tarea" type="text" placeholder="Ej.: Liquidación de sueldos" onkeydown="if(event.key==='Enter')agregarCalor()"></div>
       <div><label>Impacto (si falla)</label><select id="c-imp"><option value="1">1 · Mínimo</option><option value="2">2 · Bajo</option><option value="3" selected>3 · Medio</option><option value="4">4 · Alto</option><option value="5">5 · Crítico</option></select></div>
       <div><label>Probabilidad</label><select id="c-prob"><option value="1">1 · Rara</option><option value="2">2 · Baja</option><option value="3" selected>3 · Media</option><option value="4">4 · Alta</option><option value="5">5 · Casi segura</option></select></div>
-      <button class="btn primario add" onclick="agregarCalor()"><svg class="hi" width="18" height="18"><use href="#i-plus"/></svg> Agregar</button>
+      <button class="btn primario" onclick="agregarCalor()"><svg class="hi" width="18" height="18"><use href="#i-plus"/></svg> Agregar</button>
     </div>
 
     <table>
@@ -338,7 +306,7 @@
     <div class="leyenda">Vertical: Impacto (5 arriba) · Horizontal: Probabilidad (5 a la derecha). El número dentro de la celda es la tarea.</div>
 
     <div class="acciones" style="margin-top:14px">
-      <button class="btn primario" onclick="window.print()"><svg class="hi" width="18" height="18"><use href="#i-printer"/></svg> Imprimir / Guardar PDF</button>
+      <button class="btn primario" onclick="pdfCalor()"><svg class="hi" width="18" height="18"><use href="#i-download"/></svg> Descargar PDF</button>
       <button class="btn secundario" onclick="vaciarCalor()">Vaciar</button>
     </div>
   </div>
@@ -355,48 +323,50 @@
     <div class="ah" onclick="toggleAyuda('ay3')"><span class="q">?</span> ¿Cómo funciona? <span class="toggle" id="tg-ay3">ocultar</span></div>
     <div class="pasos">
       <div class="ap"><span class="n">1</span><div>Completá de arriba hacia abajo: datos, objetivo, metodología y resumen ejecutivo.</div></div>
-      <div class="ap"><span class="n">2</span><div>En <b>Hallazgos</b>, tocá "+ Agregar hallazgo" por cada cosa que encontraste. Elegí su criticidad (el borde se pinta solo) y pegá la evidencia.</div></div>
-      <div class="ap"><span class="n">3</span><div>Cerrá con recomendaciones, conclusión y firmas. Tocá <b>Imprimir / PDF</b> y ya tenés el informe listo.</div></div>
+      <div class="ap"><span class="n">2</span><div>En <b>Hallazgos</b>, tocá "Agregar hallazgo" por cada cosa que encontraste. Elegí su criticidad (el borde se pinta solo) y pegá la evidencia.</div></div>
+      <div class="ap"><span class="n">3</span><div>Cerrá con recomendaciones, conclusión y firmas. Tocá <b>Descargar PDF</b> y se genera el informe formateado.</div></div>
       <div class="tip"><b>Por qué por escrito:</b> el informe documentado es lo que te protege cuando después alguien quiere echarte la culpa de algo que ya advertiste.</div>
     </div>
   </div>
 
   <div class="card"><div class="seclabel"><span class="n">1</span> Datos generales</div>
     <div class="duo">
-      <div class="campo"><label>Empresa</label><input type="text"></div>
-      <div class="campo"><label>Rubro</label><input type="text"></div>
-      <div class="campo"><label>Período auditado</label><input type="text" placeholder="enero–junio 2026"></div>
-      <div class="campo"><label>Fecha del informe</label><input type="text"></div>
-      <div class="campo"><label>Auditor responsable</label><input type="text"></div>
-      <div class="campo"><label>Tipo de trabajo</label><select><option>Auditoría</option><option>Consultoría</option><option>Auditoría de buenas prácticas</option></select></div>
+      <div class="campo"><label>Empresa</label><input id="in-empresa" type="text"></div>
+      <div class="campo"><label>Rubro</label><input id="in-rubro" type="text"></div>
+      <div class="campo"><label>Período auditado</label><input id="in-periodo" type="text" placeholder="enero–junio 2026"></div>
+      <div class="campo"><label>Fecha del informe</label><input id="in-fecha" type="text"></div>
+      <div class="campo"><label>Auditor responsable</label><input id="in-auditor" type="text"></div>
+      <div class="campo"><label>Tipo de trabajo</label><select id="in-tipo"><option>Auditoría</option><option>Consultoría</option><option>Auditoría de buenas prácticas</option></select></div>
     </div>
   </div>
   <div class="card"><div class="seclabel"><span class="n">2</span> Objetivo y alcance</div>
-    <div class="campo"><label>¿Por qué se solicitó?</label><textarea placeholder="El dolor concreto que motivó el pedido"></textarea></div>
-    <div class="campo"><label>Procesos incluidos / excluidos</label><textarea placeholder="Qué se auditó y qué quedó afuera (no controlable)"></textarea></div>
+    <div class="campo"><label>¿Por qué se solicitó?</label><textarea id="in-porque" placeholder="El dolor concreto que motivó el pedido"></textarea></div>
+    <div class="campo"><label>Procesos incluidos / excluidos</label><textarea id="in-procesos" placeholder="Qué se auditó y qué quedó afuera (no controlable)"></textarea></div>
   </div>
   <div class="card"><div class="seclabel"><span class="n">3</span> Metodología</div>
-    <div class="campo"><textarea placeholder="Relevamiento de procesos (IN/OUT, 6 requisitos), control por oposición, muestreo de rastros últimos 3–6 meses, entrevistas..."></textarea></div>
+    <div class="campo"><textarea id="in-metodologia" placeholder="Relevamiento de procesos (IN/OUT, 6 requisitos), control por oposición, muestreo de rastros últimos 3–6 meses, entrevistas..."></textarea></div>
   </div>
   <div class="card"><div class="seclabel"><span class="n">4</span> Resumen ejecutivo</div>
-    <div class="campo"><textarea placeholder="3–5 líneas con lo central para la dirección"></textarea></div>
+    <div class="campo"><textarea id="in-resumen" style="min-height:110px" placeholder="3–5 líneas con lo central para la dirección"></textarea></div>
   </div>
   <div class="card"><div class="seclabel"><span class="n">5</span> Hallazgos</div>
     <div id="hallazgos"></div>
-    <button class="btn secundario add" onclick="agregarHallazgo()"><svg class="hi" width="18" height="18"><use href="#i-plus"/></svg> Agregar hallazgo</button>
+    <button class="btn secundario" onclick="agregarHallazgo()"><svg class="hi" width="18" height="18"><use href="#i-plus"/></svg> Agregar hallazgo</button>
   </div>
   <div class="card"><div class="seclabel"><span class="n">6</span> Recomendaciones / Plan de acción</div>
-    <div class="campo"><textarea placeholder="Qué hacer, quién y en qué plazo. Solo sobre lo controlable."></textarea></div>
+    <div class="campo"><textarea id="in-recomendaciones" placeholder="Qué hacer, quién y en qué plazo. Solo sobre lo controlable."></textarea></div>
   </div>
   <div class="card"><div class="seclabel"><span class="n">7</span> Conclusión</div>
-    <div class="campo"><textarea placeholder="Cierre profesional: lo que se controla y lo que queda fuera."></textarea></div>
+    <div class="campo"><textarea id="in-conclusion" placeholder="Cierre profesional: lo que se controla y lo que queda fuera."></textarea></div>
   </div>
   <div class="card"><div class="seclabel"><span class="n">8</span> Firmas</div>
     <div class="duo">
-      <div class="campo"><label>Auditor</label><input type="text" placeholder="Aclaración y firma"></div>
-      <div class="campo"><label>Recibido por (empresa)</label><input type="text" placeholder="Aclaración y firma"></div>
+      <div class="campo"><label>Auditor</label><input id="in-firma-auditor" type="text" placeholder="Aclaración y firma"></div>
+      <div class="campo"><label>Recibido por (empresa)</label><input id="in-firma-recibido" type="text" placeholder="Aclaración y firma"></div>
     </div>
-    <div class="acciones" style="margin-top:8px"><button class="btn primario" onclick="window.print()"><svg class="hi" width="18" height="18"><use href="#i-printer"/></svg> Imprimir / Guardar PDF</button></div>
+    <div class="acciones" style="margin-top:8px">
+      <button class="btn primario" onclick="pdfInforme()"><svg class="hi" width="18" height="18"><use href="#i-download"/></svg> Descargar PDF</button>
+    </div>
   </div>
 </div>
 
@@ -433,7 +403,7 @@ Agregá un SEMÁFORO automático que se actualice mientras escribo:
 - ÁMBAR si los críticos están pero falta algún dato de respaldo.
 - VERDE si está todo completo.
 
-Sumá un botón "Imprimir / Guardar como PDF" (window.print) con estilos de impresión limpios.
+Sumá un botón que GENERE UN PDF con jsPDF (texto real, no captura de pantalla) con los datos cargados.
 Diseño sobrio y profesional, nada recargado. Español rioplatense.</span></div>
     <div class="acciones" style="margin-top:18px">
       <a class="btn primario" href="relevamiento_procesos_auditoria.html" target="_blank" rel="noopener"><svg class="hi" width="18" height="18"><use href="#i-eye"/></svg> Ver muestra del prompt</a>
@@ -442,11 +412,10 @@ Diseño sobrio y profesional, nada recargado. Español rioplatense.</span></div>
   </div>
 </div>
 
-<footer>
-  <div class="foot-line">Escencial Consultora · Kit de Auditoría RRHH con IA · Clase 6 — Powered by ONE</div>
-</footer>
+<footer>Escencial Consultora · Kit de Auditoría RRHH con IA · Clase 6 — Powered by ONE</footer>
 
 <script>
+  /* ---------- Navegación ---------- */
   function ir(id, btn){
     document.querySelectorAll('.panel').forEach(p=>p.classList.remove('activo'));
     document.querySelectorAll('.tab').forEach(t=>t.classList.remove('activo'));
@@ -455,19 +424,19 @@ Diseño sobrio y profesional, nada recargado. Español rioplatense.</span></div>
     window.scrollTo({top:0,behavior:'smooth'});
   }
   function toggleAyuda(id){
-    const a=document.getElementById(id);
-    a.classList.toggle('cerrada');
+    const a=document.getElementById(id);a.classList.toggle('cerrada');
     document.getElementById('tg-'+id).textContent = a.classList.contains('cerrada') ? 'ver' : 'ocultar';
   }
+  const gv = id => { const e=document.getElementById(id); return e ? e.value.trim() : ''; };
 
-  /* Relevamiento */
-  function vR(e){return (e.value||'').trim();}
+  /* ---------- Relevamiento: semáforo ---------- */
   function evalRelev(){
     const cr=[...document.querySelectorAll('[data-r="critico"]')];
     const re=[...document.querySelectorAll('[data-r="respaldo"]')];
     const inf=[...document.querySelectorAll('[data-r="info"]')];
-    const cf=cr.filter(e=>!vR(e)).length, rf=re.filter(e=>!vR(e)).length;
-    const vacio=[...cr,...re,...inf].every(e=>!vR(e));
+    const v=e=>(e.value||'').trim();
+    const cf=cr.filter(e=>!v(e)).length, rf=re.filter(e=>!v(e)).length;
+    const vacio=[...cr,...re,...inf].every(e=>!v(e));
     const s=document.getElementById('semaforo'),t=document.getElementById('sem-t'),d=document.getElementById('sem-d');
     s.classList.remove('rojo','ambar','verde');
     if(vacio){t.textContent='Completá el relevamiento';d.textContent='El semáforo se actualiza solo mientras cargás los campos.';return;}
@@ -475,14 +444,19 @@ Diseño sobrio y profesional, nada recargado. Español rioplatense.</span></div>
     else if(rf>0){s.classList.add('ambar');t.textContent='Riesgo medio — completar';d.textContent='Los críticos están, pero faltan '+rf+' dato(s) de descripción / documentación / periodicidad.';}
     else{s.classList.add('verde');t.textContent='Proceso trazado correctamente';d.textContent='Tiene responsable, backup, control, descripción, documentación y periodicidad.';}
   }
-  function limpiarRelev(){document.querySelectorAll('[data-r]').forEach(e=>e.value='');evalRelev();}
-  document.querySelectorAll('[data-r]').forEach(e=>e.addEventListener('input',evalRelev));
-  evalRelev();
+  function estadoRelev(){
+    const cr=['rl-responsable','rl-backup','rl-control'].map(gv).filter(x=>!x).length;
+    const rf=['rl-descripcion','rl-doc','rl-periodicidad','rl-oposicion'].map(gv).filter(x=>!x).length;
+    if(cr>0) return {n:'Riesgo alto',c:[192,57,43],d:'Falta '+cr+' de los 3 críticos. El proceso no tiene respaldo.'};
+    if(rf>0) return {n:'Riesgo medio',c:[201,138,22],d:'Los críticos están, faltan '+rf+' dato(s) de respaldo.'};
+    return {n:'Conforme',c:[46,125,79],d:'Los 6 requisitos están completos.'};
+  }
+  function limpiarRelev(){document.querySelectorAll('[data-r]').forEach(e=>e.value='');evalRelev();saveLS();}
 
-  /* Mapa de calor */
+  /* ---------- Mapa de calor ---------- */
   let tareas=[];
-  function nivel(p){return p>=15?'rojo':p>=8?'ambar':'verde';}
-  function clC(p){return p>=15?'c-r':p>=8?'c-a':'c-v';}
+  const nivel=p=>p>=15?'rojo':p>=8?'ambar':'verde';
+  const clC=p=>p>=15?'c-r':p>=8?'c-a':'c-v';
   function agregarCalor(){
     const t=document.getElementById('c-tarea').value.trim();
     const i=+document.getElementById('c-imp').value,pr=+document.getElementById('c-prob').value;
@@ -502,32 +476,205 @@ Diseño sobrio y profesional, nada recargado. Español rioplatense.</span></div>
         h+=`<td class="${clC(p)}">${aqui.length?'<div class="punto">'+aqui.join(',')+'</div>':p}</td>`;}h+='</tr>';}
     h+='<tr><td class="eje"></td>';for(let prob=1;prob<=5;prob++)h+='<td class="eje">'+prob+'</td>';h+='</tr>';
     document.getElementById('c-matriz').innerHTML=h;
+    try{localStorage.setItem('kit_tareas',JSON.stringify(tareas));}catch(e){}
   }
-  renderCalor();
 
-  /* Informe */
+  /* ---------- Informe: hallazgos ---------- */
   let nH=0;
   function agregarHallazgo(){
     nH++;const c=document.getElementById('hallazgos');const div=document.createElement('div');div.className='hallazgo';
     div.innerHTML=`<button class="quitarH" onclick="this.parentNode.remove()" title="Quitar">×</button>
       <div class="top">
-        <div class="campo"><label>Hallazgo #${nH}</label><input type="text" placeholder="Descripción breve"></div>
-        <div class="campo"><label>Criticidad</label><select onchange="nivelH(this)"><option value="">Seleccionar...</option><option value="alto">Riesgo alto</option><option value="medio">Riesgo medio</option><option value="bajo">Riesgo bajo</option></select></div>
+        <div class="campo"><label>Hallazgo #${nH}</label><input data-h="titulo" type="text" placeholder="Descripción breve"></div>
+        <div class="campo"><label>Criticidad</label><select data-h="crit" onchange="nivelH(this)"><option value="">Seleccionar...</option><option value="alto">Riesgo alto</option><option value="medio">Riesgo medio</option><option value="bajo">Riesgo bajo</option></select></div>
       </div>
-      <div class="campo"><label>Evidencia / rastro de auditoría</label><textarea placeholder="Foto, planilla, mail, muestra, número correlativo..."></textarea></div>
-      <div class="campo" style="margin-bottom:0"><label>Recomendación puntual</label><input type="text"></div>`;
+      <div class="campo"><label>Evidencia / rastro de auditoría</label><textarea data-h="evidencia" placeholder="Foto, planilla, mail, muestra, número correlativo..."></textarea></div>
+      <div class="campo" style="margin-bottom:0"><label>Recomendación puntual</label><input data-h="reco" type="text"></div>`;
     c.appendChild(div);
   }
   function nivelH(sel){const b=sel.closest('.hallazgo');b.classList.remove('alto','medio','bajo');if(sel.value)b.classList.add(sel.value);}
-  agregarHallazgo();
 
-  /* Prompt */
+  /* ---------- Generación de PDF (jsPDF) ---------- */
+  const slug = s => (s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') || 'documento';
+
+  function makePDF(title, subtitle, build, filename){
+    if(!window.jspdf || !window.jspdf.jsPDF){
+      alert('No se pudo cargar el generador de PDF. Revisá tu conexión a internet y volvé a intentar.');return;
+    }
+    const doc = new window.jspdf.jsPDF({unit:'mm',format:'a4'});
+    const M=18, W=210, right=W-M;
+    const oscuro=[26,24,29], fucsia=[225,123,215], cian=[107,225,227], sub=[90,88,98], linea=[211,214,226];
+
+    doc.setFillColor(...oscuro);doc.rect(0,0,W,30,'F');
+    doc.setFillColor(...fucsia);doc.rect(0,30,W/2,1.4,'F');
+    doc.setFillColor(...cian);doc.rect(W/2,30,W/2,1.4,'F');
+    doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(16);
+    doc.text(title, M, 15);
+    if(subtitle){doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(205,210,220);doc.text(doc.splitTextToSize(subtitle, right-M-38), M, 22);}
+    doc.setFontSize(9);doc.setTextColor(150,160,175);doc.text('Escencial · ONE', right, 15, {align:'right'});
+
+    const c = {
+      doc, M, W, right, y:42,
+      ensure(h){ if(this.y + h > 282){ this.doc.addPage(); this.y=20; } },
+      sectionTitle(n, txt){
+        this.ensure(14);
+        this.doc.setFillColor(...fucsia);this.doc.roundedRect(this.M, this.y-4.2, 6, 6, 1.3, 1.3, 'F');
+        this.doc.setTextColor(...oscuro);this.doc.setFont('helvetica','bold');this.doc.setFontSize(11);
+        this.doc.text((n?n+'.  ':'')+txt, this.M+9, this.y);
+        this.y+=4;this.doc.setDrawColor(...linea);this.doc.line(this.M, this.y, this.right, this.y);this.y+=7;
+      },
+      field(label, value){
+        value=(value&&value.length)?value:'—';
+        this.ensure(11);
+        this.doc.setFont('helvetica','bold');this.doc.setFontSize(8.3);this.doc.setTextColor(...sub);
+        this.doc.text(label.toUpperCase(), this.M, this.y);this.y+=4.6;
+        this.doc.setFont('helvetica','normal');this.doc.setFontSize(11);this.doc.setTextColor(22,22,28);
+        const lines=this.doc.splitTextToSize(value, this.right-this.M);
+        for(const ln of lines){ this.ensure(6); this.doc.text(ln, this.M, this.y); this.y+=5.6; }
+        this.y+=3.2;
+      },
+      gap(h){this.y+=(h||4);}
+    };
+
+    build(c, {oscuro,fucsia,cian,sub,linea});
+
+    const pages=doc.getNumberOfPages();
+    for(let i=1;i<=pages;i++){
+      doc.setPage(i);
+      doc.setDrawColor(...linea);doc.line(M,288,right,288);
+      doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(...sub);
+      doc.text('Escencial Consultora · Auditoría RRHH con IA', M, 293);
+      doc.text('Página '+i+' de '+pages, right, 293, {align:'right'});
+    }
+    doc.save(filename);
+  }
+
+  function pdfRelevamiento(){
+    const proc=gv('rl-proceso')||'(sin nombre)';
+    const sub=proc + (gv('rl-area')?'  ·  '+gv('rl-area'):'') + (gv('rl-auditor')?'  ·  '+gv('rl-auditor'):'');
+    makePDF('Relevamiento de Proceso', sub, (c)=>{
+      c.field('IN — qué recibe y de quién', gv('rl-in'));
+      c.field('OUT — qué entrega y a quién', gv('rl-out'));
+      c.sectionTitle('1','Responsable · Backup · Control (los 3 críticos)');
+      c.field('Responsable (quién hace)', gv('rl-responsable'));
+      c.field('Backup (quién reemplaza)', gv('rl-backup'));
+      c.field('Control (quién supervisa)', gv('rl-control'));
+      c.sectionTitle('2','Descripción · Documentación · Periodicidad');
+      c.field('Descripción de la tarea', gv('rl-descripcion'));
+      c.field('Documentación respaldatoria', gv('rl-doc'));
+      c.field('Periodicidad', gv('rl-periodicidad'));
+      c.field('Control por oposición', gv('rl-oposicion'));
+      const e=estadoRelev();c.ensure(20);
+      c.doc.setFillColor(...e.c);c.doc.roundedRect(c.M, c.y, c.right-c.M, 15, 2.5, 2.5, 'F');
+      c.doc.setTextColor(255,255,255);c.doc.setFont('helvetica','bold');c.doc.setFontSize(11.5);
+      c.doc.text('Estado: '+e.n, c.M+6, c.y+6.5);
+      c.doc.setFont('helvetica','normal');c.doc.setFontSize(9.2);
+      c.doc.text(e.d, c.M+6, c.y+11.5);
+      c.y+=20;
+    }, 'relevamiento-'+slug(proc)+'.pdf');
+  }
+
+  function pdfCalor(){
+    if(!tareas.length){alert('Cargá al menos una tarea para generar el PDF.');return;}
+    makePDF('Mapa de Calor de Riesgos', 'Riesgo = Impacto × Probabilidad  ·  '+tareas.length+' tarea(s)', (c)=>{
+      const X={n:c.M, tarea:c.M+10, imp:118, prob:134, punt:150, nivel:166};
+      c.doc.setFont('helvetica','bold');c.doc.setFontSize(8.3);c.doc.setTextColor(90,88,98);
+      c.doc.text('#',X.n,c.y);c.doc.text('TAREA / PROCESO',X.tarea,c.y);c.doc.text('IMP',X.imp,c.y);
+      c.doc.text('PROB',X.prob,c.y);c.doc.text('PUNT',X.punt,c.y);c.doc.text('NIVEL',X.nivel,c.y);
+      c.y+=2;c.doc.setDrawColor(211,214,226);c.doc.line(c.M,c.y,c.right,c.y);c.y+=5;
+      tareas.forEach((x,i)=>{
+        const p=x.i*x.pr,n=nivel(p);
+        const col=n==='rojo'?[192,57,43]:n==='ambar'?[201,138,22]:[46,125,79];
+        const txt=n==='rojo'?'Riesgo alto':n==='ambar'?'Riesgo medio':'Riesgo bajo';
+        const nameLines=c.doc.splitTextToSize(x.t, X.imp-X.tarea-4);
+        const rowH=Math.max(nameLines.length*5.2, 7.5);
+        c.ensure(rowH+2);
+        c.doc.setFont('helvetica','normal');c.doc.setFontSize(10);c.doc.setTextColor(22,22,28);
+        c.doc.text(String(i+1),X.n,c.y);c.doc.text(nameLines,X.tarea,c.y);
+        c.doc.text(String(x.i),X.imp+2,c.y);c.doc.text(String(x.pr),X.prob+3,c.y);
+        c.doc.setFont('helvetica','bold');c.doc.text(String(p),X.punt+3,c.y);
+        c.doc.setFillColor(...col);c.doc.roundedRect(X.nivel, c.y-3.6, 26, 5.4, 1.5, 1.5, 'F');
+        c.doc.setTextColor(255,255,255);c.doc.setFont('helvetica','bold');c.doc.setFontSize(7.5);c.doc.text(txt, X.nivel+2, c.y);
+        c.y+=rowH;c.doc.setDrawColor(235,237,242);c.doc.line(c.M,c.y-2.2,c.right,c.y-2.2);
+      });
+      c.gap(6);
+      c.doc.setFont('helvetica','normal');c.doc.setFontSize(9);c.doc.setTextColor(90,88,98);
+      const leg=c.doc.splitTextToSize('Criterio: Rojo (15-25) inegociable, va primero. Ambar (8-14) planificar. Verde (1-7) puede esperar. En crisis se atacan primero las rojas.', c.right-c.M);
+      leg.forEach(l=>{c.ensure(5);c.doc.text(l,c.M,c.y);c.y+=5;});
+    }, 'mapa-de-calor.pdf');
+  }
+
+  function pdfInforme(){
+    const emp=gv('in-empresa')||'(empresa)';
+    const sub=emp + (gv('in-rubro')?'  ·  '+gv('in-rubro'):'') + (gv('in-periodo')?'  ·  '+gv('in-periodo'):'');
+    makePDF('Informe Final de Auditoría', sub, (c)=>{
+      c.sectionTitle('1','Datos generales');
+      c.field('Empresa', gv('in-empresa'));c.field('Rubro', gv('in-rubro'));
+      c.field('Período auditado', gv('in-periodo'));c.field('Fecha del informe', gv('in-fecha'));
+      c.field('Auditor responsable', gv('in-auditor'));c.field('Tipo de trabajo', gv('in-tipo'));
+      c.sectionTitle('2','Objetivo y alcance');
+      c.field('¿Por qué se solicitó?', gv('in-porque'));
+      c.field('Procesos incluidos / excluidos', gv('in-procesos'));
+      c.sectionTitle('3','Metodología');c.field('Metodología', gv('in-metodologia'));
+      c.sectionTitle('4','Resumen ejecutivo');c.field('Resumen', gv('in-resumen'));
+      c.sectionTitle('5','Hallazgos');
+      const hs=[...document.querySelectorAll('#hallazgos .hallazgo')];
+      if(!hs.length){c.field('Hallazgos','Sin hallazgos cargados.');}
+      hs.forEach((h,i)=>{
+        const tit=(h.querySelector('[data-h="titulo"]').value||'').trim();
+        const crit=(h.querySelector('[data-h="crit"]').value||'').trim();
+        const ev=(h.querySelector('[data-h="evidencia"]').value||'').trim();
+        const reco=(h.querySelector('[data-h="reco"]').value||'').trim();
+        const cc=crit==='alto'?[192,57,43]:crit==='medio'?[201,138,22]:crit==='bajo'?[46,125,79]:[164,168,192];
+        c.ensure(12);
+        c.doc.setFillColor(...cc);c.doc.rect(c.M, c.y-4, 1.8, 7.5, 'F');
+        c.doc.setFont('helvetica','bold');c.doc.setFontSize(10.5);c.doc.setTextColor(22,22,28);
+        c.doc.text('Hallazgo #'+(i+1)+(tit?':  '+tit:''), c.M+5, c.y);
+        if(crit){const ct=crit==='alto'?'RIESGO ALTO':crit==='medio'?'RIESGO MEDIO':'RIESGO BAJO';
+          c.doc.setFontSize(8);c.doc.setTextColor(...cc);c.doc.text(ct, c.right, c.y, {align:'right'});}
+        c.y+=6.5;
+        if(ev) c.field('Evidencia / rastro', ev);
+        if(reco) c.field('Recomendación', reco);
+        c.gap(1);
+      });
+      c.sectionTitle('6','Recomendaciones / Plan de acción');c.field('Recomendaciones', gv('in-recomendaciones'));
+      c.sectionTitle('7','Conclusión');c.field('Conclusión', gv('in-conclusion'));
+      c.sectionTitle('8','Firmas');
+      c.field('Auditor', gv('in-firma-auditor'));c.field('Recibido por (empresa)', gv('in-firma-recibido'));
+    }, 'informe-auditoria-'+slug(emp)+'.pdf');
+  }
+
+  /* ---------- Prompt ---------- */
   function copiarPrompt(){
     const t=document.getElementById('prompt-texto').textContent.trim();
     navigator.clipboard.writeText(t);
     const b=document.querySelector('.copiar');const orig=b.innerHTML;
     b.textContent='Copiado ✓';setTimeout(()=>b.innerHTML=orig,1600);
   }
+
+  /* ---------- Autoguardado (localStorage) ---------- */
+  function saveLS(){
+    const d={};document.querySelectorAll('input[id],textarea[id],select[id]').forEach(e=>d[e.id]=e.value);
+    try{localStorage.setItem('kit_campos',JSON.stringify(d));}catch(e){}
+  }
+  function loadLS(){
+    try{
+      const d=JSON.parse(localStorage.getItem('kit_campos')||'{}');
+      document.querySelectorAll('input[id],textarea[id],select[id]').forEach(e=>{if(d[e.id]!=null)e.value=d[e.id];});
+      const tt=JSON.parse(localStorage.getItem('kit_tareas')||'[]');if(Array.isArray(tt))tareas=tt;
+    }catch(e){}
+  }
+
+  document.addEventListener('input', e=>{ if(e.target.id) saveLS(); });
+  document.addEventListener('change', e=>{ if(e.target.id) saveLS(); });
+  document.querySelectorAll('[data-r]').forEach(e=>e.addEventListener('input',evalRelev));
+
+  window.addEventListener('load', ()=>{
+    loadLS();
+    agregarHallazgo();
+    evalRelev();
+    renderCalor();
+  });
 </script>
 </body>
 </html>
