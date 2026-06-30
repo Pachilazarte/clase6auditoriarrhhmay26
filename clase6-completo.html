@@ -252,7 +252,7 @@
       <div class="ct">
         <div class="campo" style="margin-bottom:14px"><label>Descripción de la tarea (acción humana)</label><textarea id="rl-descripcion" data-r="respaldo" placeholder="Qué se hace concretamente en este paso"></textarea></div>
         <div class="duo">
-          <div class="campo"><label>Documentación respaldatoria</label><input id="rl-doc" type="text" data-r="respaldo" placeholder="Mail, formulario, sistema, código..."></div>
+          <div class="campo"><label>Documentación respaldatoria</label><input id="rl-doc" type="text" data-r="respaldo" placeholder="Legajo, recibo de sueldo, planilla de asistencia, sistema de RRHH..."></div>
           <div class="campo"><label>Periodicidad</label><select id="rl-periodicidad" data-r="respaldo"><option value="">Seleccionar...</option><option>Diaria</option><option>Quincenal</option><option>Mensual</option><option>Eventual (al ocurrir un suceso)</option></select></div>
         </div>
         <div class="campo" style="margin-top:14px"><label>¿Hay control por oposición? (la información vuelve y se concilia)</label><select id="rl-oposicion" data-r="respaldo"><option value="">Seleccionar...</option><option>Sí — el comprobante vuelve y se controla</option><option>No — se entrega y no se verifica el retorno</option></select></div>
@@ -387,24 +387,26 @@
   </div>
 
   <div class="card">
-    <div class="prompt"><button class="copiar" onclick="copiarPrompt()"><svg class="hi" width="15" height="15" style="stroke:var(--oscuro)"><use href="#i-copy"/></svg> Copiar</button><span id="prompt-texto">Comportate como auditor de RRHH y a la vez programador front-end.
+    <div class="prompt"><button class="copiar" onclick="copiarPrompt()"><svg class="hi" width="15" height="15" style="stroke:var(--oscuro)"><use href="#i-copy"/></svg> Copiar</button><span id="prompt-texto">Vas a actuar como auditor de RRHH y desarrollador front-end. Quiero que construyas un FORMULARIO DE RELEVAMIENTO DE PROCESOS DE RRHH en un único archivo HTML autocontenido.
 
-Necesito un archivo HTML autocontenido (un solo archivo, sin librerías externas) que sea un FORMULARIO DE RELEVAMIENTO DE PROCESOS para auditoría.
+IMPORTANTE: antes de escribir una sola línea de código, haceme primero estas preguntas y esperá mis respuestas. No generes nada hasta que te conteste.
 
-Debe pedir, por cada proceso:
-- Cabecera: nombre del proceso, área, auditor y fecha.
+1) ¿Vas a usar un logo? Si la respuesta es sí, pedime el link de la imagen del logo para incrustarlo.
+2) ¿Qué colores o paleta querés (o de qué marca)?
+3) La fecha del relevamiento, ¿la querés fija o como campo personalizable / editable?
+4) ¿Qué proceso de RRHH vas a relevar principalmente (selección, liquidación de sueldos, capacitación, control de asistencia, onboarding, etc.) para ajustar los ejemplos?
+5) ¿Qué otros datos o campos te gustaría sumar?
+
+Recién cuando tenga TODAS mis respuestas, generá el HTML con:
+- Cabecera: proceso, área, auditor y fecha (según lo que respondí en la pregunta 3).
 - IN (qué recibe y de quién) y OUT (qué entrega y a quién).
 - Los 3 requisitos CRÍTICOS: responsable, backup y control (3 personas distintas).
 - Los 3 de respaldo: descripción de la tarea, documentación respaldatoria y periodicidad.
 - Si hay control por oposición (sí / no).
+- Un SEMÁFORO automático: ROJO si falta un crítico, ÁMBAR si falta un respaldo, VERDE si está completo.
+- Un botón que GENERE UN PDF con jsPDF (texto real, NO captura de pantalla) con los datos cargados.
 
-Agregá un SEMÁFORO automático que se actualice mientras escribo:
-- ROJO si falta alguno de los 3 críticos (hallazgo de riesgo alto).
-- ÁMBAR si los críticos están pero falta algún dato de respaldo.
-- VERDE si está todo completo.
-
-Sumá un botón que GENERE UN PDF con jsPDF (texto real, no captura de pantalla) con los datos cargados.
-Diseño sobrio y profesional, nada recargado. Español rioplatense.</span></div>
+Todos los ejemplos deben ser de RRHH. Español rioplatense, diseño sobrio y profesional.</span></div>
     <div class="acciones" style="margin-top:18px">
       <a class="btn primario" href="relevamiento_procesos_auditoria.html" target="_blank" rel="noopener"><svg class="hi" width="18" height="18"><use href="#i-eye"/></svg> Ver muestra del prompt</a>
     </div>
