@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relevamiento de Procesos — Papel de Trabajo de Auditoría</title>
+<style>
+  :root{
+    --navy: #1f2d3d;
+    --navy-soft: #34495e;
+    --paper: #fbfaf7;
+    --line: #d8d3c7;
+    --ink: #2b2b28;
+    --muted: #6b6a64;
+    --rojo: #b3261e;
+    --rojo-bg: #fbeae9;
+    --ambar: #9a6b00;
+    --ambar-bg: #fdf3da;
+    --verde: #1e6b3c;
+    --verde-bg: #e7f3ec;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Georgia", "Times New Roman", serif;
+    line-height:1.45;
+  }
+
+  .toolbar{
+    position: sticky;
+    top:0;
+    z-index: 50;
+    background: var(--navy);
+    color:#f1efe9;
+    padding: 14px 28px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+  }
+  .toolbar .marca{
+    font-size:13px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    opacity:.85;
+  }
+  .toolbar button{
+    background:#f1efe9;
+    color: var(--navy);
+    border:none;
+    padding:9px 18px;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:.02em;
+    border-radius:3px;
+    cursor:pointer;
+  }
+  .toolbar button:hover{ background:#fff; }
+
+  .hoja{
+    max-width: 860px;
+    margin: 32px auto 80px;
+    background:#fff;
+    border:1px solid var(--line);
+    padding: 44px 56px 56px;
+  }
+
+  header.encabezado{
+    border-bottom: 2px solid var(--navy);
+    padding-bottom:14px;
+    margin-bottom: 28px;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+  }
+  header.encabezado h1{
+    font-size: 22px;
+    margin:0 0 4px;
+    color: var(--navy);
+    font-weight:700;
+  }
+  header.encabezado p{
+    margin:0;
+    font-family:"Helvetica Neue", Arial, sans-serif;
+    font-size:11px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color: var(--muted);
+  }
+  .ref-doc{
+    font-family:"Helvetica Neue", Arial, sans-serif;
+    font-size:11px;
+    color: var(--muted);
+    text-align:right;
+  }
+
+  /* Semáforo */
+  .semaforo{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:14px 18px;
+    border-radius:4px;
+    margin-bottom:30px;
+    font-family:"Helvetica Neue", Arial, sans-serif;
+    border:1px solid var(--line);
+    transition: background .2s, border-color .2s;
+  }
+  .semaforo .luz{
+    width:18px;
+    height:18px;
+    border-radius:50%;
+    flex-shrink:0;
+    box-shadow: inset 0 0 0 2px rgba(0,0,0,.08);
+  }
+  .semaforo .texto strong{
+    display:block;
+    font-size:13px;
+    letter-spacing:.03em;
+  }
+  .semaforo .texto span{
+    font-size:12px;
+    color: var(--muted);
+  }
+  .semaforo.rojo{ background: var(--rojo-bg); border-color:#e3b3af; }
+  .semaforo.rojo .luz{ background: var(--rojo); }
+  .semaforo.rojo .texto strong{ color: var(--rojo); }
+
+  .semaforo.ambar{ background: var(--ambar-bg); border-color:#e6cd84; }
+  .semaforo.ambar .luz{ background: var(--ambar); }
+  .semaforo.ambar .texto strong{ color: var(--ambar); }
+
+  .semaforo.verde{ background: var(--verde-bg); border-color:#a8d2bb; }
+  .semaforo.verde .luz{ background: var(--verde); }
+  .semaforo.verde .texto strong{ color: var(--verde); }
+
+  section.bloque{
+    margin-bottom: 30px;
+  }
+  section.bloque h2{
+    font-size:13px;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    color: var(--navy);
+    font-family:"Helvetica Neue", Arial, sans-serif;
+    border-bottom:1px solid var(--line);
+    padding-bottom:6px;
+    margin:0 0 14px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  section.bloque h2 .tag{
+    font-size:10px;
+    font-weight:700;
+    padding:2px 7px;
+    border-radius:2px;
+    letter-spacing:.06em;
+  }
+  .tag.critico{ background: var(--rojo-bg); color: var(--rojo); }
+  .tag.respaldo{ background:#eef1f4; color: var(--navy-soft); }
+
+  .grid{
+    display:grid;
+    gap:16px;
+  }
+  .grid.cols-2{ grid-template-columns: 1fr 1fr; }
+  .grid.cols-3{ grid-template-columns: 1fr 1fr 1fr; }
+  .grid.cols-4{ grid-template-columns: 1fr 1fr 1fr 1fr; }
+
+  label{
+    display:block;
+    font-family:"Helvetica Neue", Arial, sans-serif;
+    font-size:11px;
+    color: var(--muted);
+    margin-bottom:4px;
+    letter-spacing:.02em;
+  }
+  label .req{ color: var(--rojo); }
+
+  input[type="text"], input[type="date"], textarea, select{
+    width:100%;
+    padding:8px 10px;
+    border:1px solid var(--line);
+    border-radius:3px;
+    font-family: "Georgia", serif;
+    font-size:13.5px;
+    color: var(--ink);
+    background:#fdfdfb;
+  }
+  input:focus, textarea:focus, select:focus{
+    outline:none;
+    border-color: var(--navy-soft);
+    background:#fff;
+  }
+  textarea{ resize:vertical; min-height:54px; }
+
+  .campo{ margin-bottom:0; }
+
+  .duplicado-warn{
+    font-family:"Helvetica Neue", Arial, sans-serif;
+    font-size:11px;
+    color: var(--rojo);
+    margin-top:6px;
+    display:none;
+  }
+  .duplicado-warn.activo{ display:block; }
+
+  .oposicion{
+    display:flex;
+    gap:24px;
+    align-items:center;
+    font-family:"Helvetica Neue", Arial, sans-serif;
+    font-size:13px;
+  }
+  .oposicion label{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size:13px;
+    color: var(--ink);
+    margin-bottom:0;
+  }
+
+  .observaciones textarea{ min-height:70px; }
+
+  footer.firma{
+    margin-top:36px;
+    padding-top:18px;
+    border-top:1px solid var(--line);
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:20px;
+    font-family:"Helvetica Neue", Arial, sans-serif;
+    font-size:11px;
+    color: var(--muted);
+  }
+  footer.firma .linea{
+    border-top:1px solid var(--ink);
+    margin-top:34px;
+    padding-top:4px;
+  }
+
+  @media (max-width: 720px){
+    .hoja{ padding: 28px 20px; margin: 16px; }
+    header.encabezado{ flex-direction:column; align-items:flex-start; gap:10px; }
+    .ref-doc{ text-align:left; }
+    .grid.cols-2, .grid.cols-3, .grid.cols-4{ grid-template-columns: 1fr; }
+    footer.firma{ grid-template-columns: 1fr; }
+  }
+
+  /* IMPRESIÓN */
+  @media print{
+    .toolbar{ display:none; }
+    body{ background:#fff; }
+    .hoja{
+      margin:0;
+      border:none;
+      padding:0;
+      max-width:100%;
+    }
+    section.bloque{ break-inside: avoid; }
+    .semaforo{ break-inside: avoid; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .tag, .semaforo .luz{ -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    input, textarea, select{ border:1px solid #999; background:#fff; }
+    input:focus, textarea:focus, select:focus{ border-color:#999; }
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <span class="marca">Auditoría Interna · Papel de trabajo de relevamiento</span>
+  <button onclick="window.print()">🖨️ Imprimir / Guardar como PDF</button>
+</div>
+
+<div class="hoja">
+
+  <header class="encabezado">
+    <div>
+      <h1>Relevamiento de Procesos</h1>
+      <p>Formulario de auditoría — control interno</p>
+    </div>
+    <div class="ref-doc">
+      Ref.: RP-<span id="refFecha">__/__/____</span><br>
+      Uso interno
+    </div>
+  </header>
+
+  <!-- SEMÁFORO -->
+  <div class="semaforo" id="semaforo">
+    <div class="luz"></div>
+    <div class="texto">
+      <strong id="semTitulo">Completá los datos críticos</strong>
+      <span id="semDetalle">Responsable, backup y control deben estar cargados y ser personas distintas.</span>
+    </div>
+  </div>
+
+  <!-- CABECERA -->
+  <section class="bloque">
+    <h2>Datos del relevamiento</h2>
+    <div class="grid cols-2">
+      <div class="campo">
+        <label>Nombre del proceso <span class="req">*</span></label>
+        <input type="text" id="nombreProceso" placeholder="Ej.: Pago a proveedores">
+      </div>
+      <div class="campo">
+        <label>Área / Sector <span class="req">*</span></label>
+        <input type="text" id="area" placeholder="Ej.: Tesorería">
+      </div>
+      <div class="campo">
+        <label>Auditor responsable <span class="req">*</span></label>
+        <input type="text" id="auditor" placeholder="Apellido y nombre">
+      </div>
+      <div class="campo">
+        <label>Fecha de relevamiento <span class="req">*</span></label>
+        <input type="date" id="fecha">
+      </div>
+    </div>
+  </section>
+
+  <!-- IN / OUT -->
+  <section class="bloque">
+    <h2>Flujo del proceso</h2>
+    <div class="grid cols-2">
+      <div class="campo">
+        <label>IN — Qué recibe y de quién</label>
+        <textarea id="entrada" placeholder="Ej.: Factura de proveedor, recibida del sector Compras"></textarea>
+      </div>
+      <div class="campo">
+        <label>OUT — Qué entrega y a quién</label>
+        <textarea id="salida" placeholder="Ej.: Orden de pago, entregada a Tesorería"></textarea>
+      </div>
+    </div>
+  </section>
+
+  <!-- CRÍTICOS -->
+  <section class="bloque">
+    <h2>Requisitos críticos <span class="tag critico">Riesgo alto si faltan</span></h2>
+    <div class="grid cols-3">
+      <div class="campo">
+        <label>Responsable <span class="req">*</span></label>
+        <input type="text" id="responsable" class="persona" placeholder="Quién ejecuta la tarea">
+      </div>
+      <div class="campo">
+        <label>Backup <span class="req">*</span></label>
+        <input type="text" id="backup" class="persona" placeholder="Quién lo reemplaza">
+      </div>
+      <div class="campo">
+        <label>Control <span class="req">*</span></label>
+        <input type="text" id="control" class="persona" placeholder="Quién controla la tarea">
+      </div>
+    </div>
+    <div class="duplicado-warn" id="avisoDuplicado">
+      ⚠ Las tres personas deben ser distintas. Hay nombres repetidos entre responsable / backup / control.
+    </div>
+  </section>
+
+  <!-- RESPALDO -->
+  <section class="bloque">
+    <h2>Documentación de respaldo <span class="tag respaldo">Completitud</span></h2>
+    <div class="grid cols-3">
+      <div class="campo">
+        <label>Descripción de la tarea</label>
+        <textarea id="descripcion" placeholder="Detalle de cómo se ejecuta la tarea, paso a paso"></textarea>
+      </div>
+      <div class="campo">
+        <label>Documentación respaldatoria</label>
+        <textarea id="documentacion" placeholder="Manuales, instructivos, registros, sistemas"></textarea>
+      </div>
+      <div class="campo">
+        <label>Periodicidad</label>
+        <input type="text" id="periodicidad" placeholder="Diaria / semanal / mensual / a demanda">
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTROL POR OPOSICIÓN -->
+  <section class="bloque">
+    <h2>Control por oposición de intereses</h2>
+    <div class="oposicion">
+      <label><input type="radio" name="oposicion" value="si" id="oposicionSi"> Sí</label>
+      <label><input type="radio" name="oposicion" value="no" id="oposicionNo"> No</label>
+    </div>
+  </section>
+
+  <!-- OBSERVACIONES -->
+  <section class="bloque observaciones">
+    <h2>Observaciones del auditor</h2>
+    <div class="campo">
+      <textarea id="observaciones" placeholder="Hallazgos, riesgos detectados, recomendaciones"></textarea>
+    </div>
+  </section>
+
+  <footer class="firma">
+    <div>
+      <div class="linea">Firma del responsable del proceso</div>
+    </div>
+    <div>
+      <div class="linea">Firma del auditor</div>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+
+  const criticos = [$('responsable'), $('backup'), $('control')];
+  const respaldo = [$('entrada'), $('salida'), $('descripcion'), $('documentacion'), $('periodicidad')];
+  const cabecera = [$('nombreProceso'), $('area'), $('auditor'), $('fecha')];
+
+  const semaforo = $('semaforo');
+  const semTitulo = $('semTitulo');
+  const semDetalle = $('semDetalle');
+  const avisoDuplicado = $('avisoDuplicado');
+  const refFecha = $('refFecha');
+
+  function val(el){ return (el.value || '').trim(); }
+
+  function nombresIguales(a, b){
+    return a.length > 0 && a.toLowerCase() === b.toLowerCase();
+  }
+
+  function hayDuplicados(){
+    const [r, b, c] = criticos.map(el => val(el));
+    if(!r && !b && !c) return false;
+    return nombresIguales(r,b) || nombresIguales(r,c) || nombresIguales(b,c);
+  }
+
+  function evaluar(){
+    const criticosCompletos = criticos.every(el => val(el).length > 0);
+    const duplicados = hayDuplicados();
+    const respaldoCompleto = respaldo.every(el => val(el).length > 0);
+
+    avisoDuplicado.classList.toggle('activo', duplicados);
+
+    semaforo.classList.remove('rojo','ambar','verde');
+
+    if(!criticosCompletos || duplicados){
+      semaforo.classList.add('rojo');
+      semTitulo.textContent = 'ROJO — Hallazgo de riesgo alto';
+      semDetalle.textContent = duplicados
+        ? 'Responsable, backup y control deben ser tres personas distintas.'
+        : 'Falta cargar responsable, backup y/o control. Sin estos tres roles separados, el proceso no tiene segregación de funciones.';
+      return;
+    }
+
+    if(!respaldoCompleto){
+      semaforo.classList.add('ambar');
+      semTitulo.textContent = 'ÁMBAR — Críticos completos, falta documentación de respaldo';
+      semDetalle.textContent = 'Completá descripción de la tarea, documentación respaldatoria y periodicidad para cerrar el relevamiento.';
+      return;
+    }
+
+    semaforo.classList.add('verde');
+    semTitulo.textContent = 'VERDE — Relevamiento completo';
+    semDetalle.textContent = 'Roles críticos segregados y documentación de respaldo cargada.';
+  }
+
+  [...criticos, ...respaldo, ...cabecera].forEach(el => {
+    el.addEventListener('input', evaluar);
+  });
+
+  $('fecha').addEventListener('input', function(){
+    if(this.value){
+      const [y,m,d] = this.value.split('-');
+      refFecha.textContent = `${d}/${m}/${y}`;
+    } else {
+      refFecha.textContent = '__/__/____';
+    }
+  });
+
+  evaluar();
+})();
+</script>
+
+</body>
+</html>
